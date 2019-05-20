@@ -2,14 +2,14 @@ const chromium = require('chrome-aws-lambda');
 const puppeteer = require('puppeteer-core');
 const util = require('util');
 
-(async () => {
+const scraper = async (event, context) => {
   let browser;
   try {
     browser = await puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
-      //executablePath: await chromium.executablePath,
-      executablePath: 'C:\\Program Files\ (x86)\\Google\\Chrome\\Application\\Chrome.exe',
+      executablePath: await chromium.executablePath,
+      //executablePath: 'C:\\Program Files\ (x86)\\Google\\Chrome\\Application\\Chrome.exe',
       headless: chromium.headless,
     });
 
@@ -60,14 +60,16 @@ const util = require('util');
       }
       responses.push(response);
     }
-    console.log(util.inspect({theater: responses}, {colors: true, depth: null}))
+    //console.log(util.inspect({theater: responses}, {colors: true, depth: null}))
+    return context.succeed({theater: responses});
   } catch (error) {
     console.log(error)
-    return;
+    context.fail(error);
   } finally {
     if (browser !== null) {
       await browser.close();
     }
   }
-})();
+};
 
+exports.handler = scraper;
