@@ -41,7 +41,7 @@ const scraper = async (event, context) => {
         for (let schedule of schedules) {
           const titleElement = await schedule.$('.lr_c_tmt');
           const title = await (await titleElement.getProperty('textContent')).jsonValue();
-          const startElementList = await schedule.$$('.lr_c_s div');
+          const startElementList = await schedule.$$('.lr_c_s .lr_c_stnl');
           const startList = [];
           for (let startElm of startElementList) {
             const startText = await (await startElm.getProperty('textContent')).jsonValue();
@@ -72,4 +72,5 @@ const scraper = async (event, context) => {
   }
 };
 
+//scraper();
 exports.handler = scraper;
