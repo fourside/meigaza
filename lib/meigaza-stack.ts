@@ -4,18 +4,20 @@ import { LayerVersion, AssetCode, Runtime } from "@aws-cdk/aws-lambda";
 import { Rule, Schedule } from "@aws-cdk/aws-events";
 import { LambdaFunction } from "@aws-cdk/aws-events-targets";
 import * as path from "path";
+import { LAMBDA_LAYER_DIR } from "./setup-lambda-layer";
 
 export class MeigazaStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
     const layer = new LayerVersion(this, "chromeLayer", {
-      code: AssetCode.fromAsset(""), // TODO
+      code: AssetCode.fromAsset(LAMBDA_LAYER_DIR),
       compatibleRuntimes: [Runtime.NODEJS_12_X],
     });
 
     const meigazaFunction = new NodejsFunction(this, "meigaza", {
-      entry: path.join(__dirname, "lambdas/meigaza/maigaza.ts"),
+      entry: path.join(__dirname, "lambdas/meigaza/meigaza.ts"),
+      handler: "handler",
       runtime: Runtime.NODEJS_12_X,
       layers: [layer],
     });
@@ -30,6 +32,7 @@ export class MeigazaStack extends Stack {
 
     const mvtkFunction = new NodejsFunction(this, "mvtk", {
       entry: path.join(__dirname, "lambdas/mvtk/mvtk.ts"),
+      handler: "handler",
       runtime: Runtime.NODEJS_12_X,
       layers: [layer],
     });
