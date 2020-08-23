@@ -3,6 +3,7 @@ import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import { LayerVersion, AssetCode, Runtime } from "@aws-cdk/aws-lambda";
 import { Rule, Schedule } from "@aws-cdk/aws-events";
 import { LambdaFunction } from "@aws-cdk/aws-events-targets";
+import { RetentionDays } from "@aws-cdk/aws-logs";
 import * as path from "path";
 import { LAMBDA_LAYER_DIR } from "./setup-lambda-layer";
 
@@ -19,6 +20,8 @@ export class MeigazaStack extends Stack {
       entry: path.join(__dirname, "lambdas/meigaza/meigaza.ts"),
       handler: "handler",
       runtime: Runtime.NODEJS_12_X,
+      memorySize: 1600,
+      logRetention: RetentionDays.SIX_MONTHS,
       layers: [layer],
     });
 
@@ -34,6 +37,8 @@ export class MeigazaStack extends Stack {
       entry: path.join(__dirname, "lambdas/mvtk/mvtk.ts"),
       handler: "handler",
       runtime: Runtime.NODEJS_12_X,
+      memorySize: 1600,
+      logRetention: RetentionDays.SIX_MONTHS,
       layers: [layer],
     });
 
