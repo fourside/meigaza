@@ -23,6 +23,9 @@ export class MeigazaStack extends Stack {
       memorySize: 1600,
       logRetention: RetentionDays.SIX_MONTHS,
       layers: [layer],
+      environment: {
+        SLACK_INCOMING_WEBHOOK_URL: process.env.SLACK_INCOMING_WEBHOOK_URL || "",
+      }
     });
 
     new Rule(this, "meigazaRule", {
@@ -40,6 +43,12 @@ export class MeigazaStack extends Stack {
       memorySize: 1600,
       logRetention: RetentionDays.SIX_MONTHS,
       layers: [layer],
+      environment: {
+        MVTK_USER: process.env.MVTK_USER || "",
+        MVTK_PASSWORD: process.env.MVTK_PASSWORD || "",
+        IFTTT_WEBHOOK_URL: process.env.IFTTT_WEBHOOK_URL || "",
+        SLACK_INCOMING_WEBHOOK_URL: process.env.SLACK_INCOMING_WEBHOOK_URL || "",
+      }
     });
 
     new Rule(this, "mvtkRule", {

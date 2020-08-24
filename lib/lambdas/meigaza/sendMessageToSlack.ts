@@ -3,7 +3,7 @@ import { mapTheatersToSlackMessage } from "./mapTheaterToSlackMessage";
 
 type Message = ReturnType<typeof mapTheatersToSlackMessage>;
 
-const INCOMING_WEBHOOK_URL = process.env.INCOMING_WEBHOOK_URL;
+const INCOMING_WEBHOOK_URL = process.env.SLACK_INCOMING_WEBHOOK_URL;
 
 export async function sendMessageToSlack(message: Message) {
   const response = await axios({
