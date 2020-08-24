@@ -1,6 +1,12 @@
-const filter = (mvtks) => {
-  const attachment = mvtks.map(mvtk => {
-    const message = {
+import { Mvtk } from "./scrapeMvtk";
+import { isWithinThisWeek } from "./util";
+
+export function mapToSlackMessage(mvtks: Mvtk) {
+  const today = new Date();
+  const attachment = mvtks.mvtk.filter(mvtk => {
+      return isWithinThisWeek(mvtk.date, today);
+    }).map(mvtk => {
+    return {
       fallback: "mvtk (fallback message)",
       color: "#36a64f",
       pretext: "mvtk: watch list",
@@ -15,10 +21,6 @@ const filter = (mvtks) => {
       ],
       ts: Math.floor(new Date().getTime() / 1000),
     };
-
-    return message;
   });
   return { attachments: attachment };
 };
-
-module.exports = filter;
