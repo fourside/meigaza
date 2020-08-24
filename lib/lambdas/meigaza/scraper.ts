@@ -81,7 +81,6 @@ async function launchBrowser() {
       headless: chromium.headless,
     });
   }
-  return await launch({
-    executablePath: process.env.CHROME_PATH,
-  });
+  const puppeteer = await import("puppeteer");
+  return await puppeteer.launch();
 }
