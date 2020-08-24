@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "lambda:ci": "npm ci --prefix lib/lambdas --production",
+    "lambda:ci": "npm ci --prefix lib/lambdas",
     "test": "jest",
     "cdk": "cdk"
   },
