@@ -13,5 +13,18 @@
     "axios": "^0.20.0",
     "chrome-aws-lambda": "^5.2.1",
     "puppeteer-core": "^5.2.1"
+  },
+  "targets": {
+    "cdk-lambda": {
+      "context": "node",
+      "includeNodeModules": {
+        "aws-sdk": false
+      },
+      "sourceMap": false,
+      "minify": false,
+      "engines": {
+        "node": ">= 12"
+      }
+    }
   }
 }
