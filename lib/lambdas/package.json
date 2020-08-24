@@ -12,6 +12,7 @@
   "dependencies": {
     "axios": "^0.20.0",
     "chrome-aws-lambda": "^5.2.1",
+    "date-fns": "^2.15.0",
     "puppeteer-core": "^5.2.1"
   },
   "targets": {
