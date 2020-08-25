@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-import 'source-map-support/register';
-import * as cdk from '@aws-cdk/core';
-import { MeigazaStack } from '../lib/meigaza-stack';
+import "source-map-support/register";
+import * as cdk from "@aws-cdk/core";
+import { MeigazaStack } from "../lib/meigaza-stack";
 import { setUpLambdaLayer } from "../lib/setup-lambda-layer";
 
 if (!process.env.SLACK_INCOMING_WEBHOOK_URL) {
@@ -11,4 +11,4 @@ if (!process.env.SLACK_INCOMING_WEBHOOK_URL) {
 setUpLambdaLayer();
 
 const app = new cdk.App();
-new MeigazaStack(app, 'MeigazaStack');
+new MeigazaStack(app, "MeigazaStack");

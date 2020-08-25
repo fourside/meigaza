@@ -1,4 +1,4 @@
-import { Stack, StackProps, Construct, Duration } from '@aws-cdk/core';
+import { Stack, StackProps, Construct, Duration } from "@aws-cdk/core";
 import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import { LayerVersion, AssetCode, Runtime } from "@aws-cdk/aws-lambda";
 import { Rule, Schedule } from "@aws-cdk/aws-events";

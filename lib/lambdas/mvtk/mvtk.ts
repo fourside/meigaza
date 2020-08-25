@@ -11,6 +11,7 @@ export async function handler(event: any) {
     const slackMessage = mapToSlackMessage(mvtks);
 
     const results = await Promise.all([
+      // prettier-ignore
       sendToIfttt(iftttMessage),
       sendToSlack(slackMessage),
     ]);

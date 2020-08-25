@@ -15,4 +15,4 @@ export async function sendMessageToSlack(message: Message) {
     data: message,
   });
   return response;
-};
+}

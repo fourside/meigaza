@@ -11,4 +11,4 @@ export function isWithinThisWeek(dateString: string, today: Date) {
   }
   const thisWeekend = endOfISOWeek(today);
   return date <= thisWeekend;
-};
+}

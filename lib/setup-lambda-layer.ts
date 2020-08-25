@@ -25,7 +25,7 @@ export function setUpLambdaLayer() {
   const command = `npm --prefix ${targetDir} install --production`;
   childProcess.execSync(command, {
     stdio: ["ignore", "inherit", "inherit"],
-    env: {...process.env},
+    env: { ...process.env },
   });
 }
 
