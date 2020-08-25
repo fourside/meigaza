@@ -1,4 +1,4 @@
-import { Stack, StackProps, Construct } from '@aws-cdk/core';
+import { Stack, StackProps, Construct, Duration } from '@aws-cdk/core';
 import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import { LayerVersion, AssetCode, Runtime } from "@aws-cdk/aws-lambda";
 import { Rule, Schedule } from "@aws-cdk/aws-events";
@@ -16,16 +16,21 @@ export class MeigazaStack extends Stack {
       compatibleRuntimes: [Runtime.NODEJS_12_X],
     });
 
-    const meigazaFunction = new NodejsFunction(this, "meigaza", {
-      entry: path.join(__dirname, "lambdas/meigaza/meigaza.ts"),
-      handler: "handler",
+    const lambdaOptions = {
       runtime: Runtime.NODEJS_12_X,
       memorySize: 1600,
       logRetention: RetentionDays.SIX_MONTHS,
       layers: [layer],
+      timeout: Duration.minutes(3),
+    };
+
+    const meigazaFunction = new NodejsFunction(this, "meigaza", {
+      entry: path.join(__dirname, "lambdas/meigaza/meigaza.ts"),
+      handler: "handler",
       environment: {
         SLACK_INCOMING_WEBHOOK_URL: process.env.SLACK_INCOMING_WEBHOOK_URL || "",
-      }
+      },
+      ...lambdaOptions,
     });
 
     new Rule(this, "meigazaRule", {
@@ -39,16 +44,13 @@ export class MeigazaStack extends Stack {
     const mvtkFunction = new NodejsFunction(this, "mvtk", {
       entry: path.join(__dirname, "lambdas/mvtk/mvtk.ts"),
       handler: "handler",
-      runtime: Runtime.NODEJS_12_X,
-      memorySize: 1600,
-      logRetention: RetentionDays.SIX_MONTHS,
-      layers: [layer],
       environment: {
         MVTK_USER: process.env.MVTK_USER || "",
         MVTK_PASSWORD: process.env.MVTK_PASSWORD || "",
         IFTTT_WEBHOOK_URL: process.env.IFTTT_WEBHOOK_URL || "",
         SLACK_INCOMING_WEBHOOK_URL: process.env.SLACK_INCOMING_WEBHOOK_URL || "",
-      }
+      },
+      ...lambdaOptions,
     });
 
     new Rule(this, "mvtkRule", {
