@@ -2,7 +2,6 @@ import { parse } from "date-fns";
 import { isWithinThisWeek } from "./util";
 
 describe("isWithinThisWeek", () => {
-
   it("should return false if publish date is future", () => {
     // arrange
     const dateString = "2020/8/28(金)公開";
@@ -50,5 +49,4 @@ describe("isWithinThisWeek", () => {
     // assert
     expect(result).toBe(true);
   });
-
 });

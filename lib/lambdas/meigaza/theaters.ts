@@ -1,4 +1,4 @@
-
+// prettier-ignore
 export const theaters = [
   "新文芸坐",
   "ギンレイホール",

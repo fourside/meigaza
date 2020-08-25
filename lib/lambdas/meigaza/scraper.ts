@@ -17,8 +17,7 @@ export async function scraper(theaters: string[]) {
     browser = await launchBrowser();
     const responses = [];
 
-    for(const theater of theaters) {
-
+    for (const theater of theaters) {
       const page = await browser.newPage();
       const url = `https://www.google.com/search?q=${encodeURIComponent(theater)}`;
       await page.goto(url, { waitUntil: "domcontentloaded" });
@@ -34,7 +33,7 @@ export async function scraper(theaters: string[]) {
         const dateText = await (await dateElm.getProperty("textContent")).jsonValue();
         await dateElm.click();
 
-        const schedules = await page.$$(`[data-date="${dateText}"] .lr_c_fcb.lr-s-stor`)
+        const schedules = await page.$$(`[data-date="${dateText}"] .lr_c_fcb.lr-s-stor`);
         const movies: Movie[] = [];
         for (const schedule of schedules) {
           const titleElement = await schedule.$(".lr_c_tmt");
@@ -46,7 +45,7 @@ export async function scraper(theaters: string[]) {
           const startList = [];
           for (const startElm of startElementList) {
             const startText = await (await startElm.getProperty("textContent")).jsonValue();
-            startList.push(startText)
+            startList.push(startText);
           }
 
           movies.push({
@@ -57,18 +56,18 @@ export async function scraper(theaters: string[]) {
 
         response.schedules.push({
           date: dateText as string,
-          movies: movies
+          movies: movies,
         });
       }
       responses.push(response);
     }
-    return {theater: responses};
+    return { theater: responses };
   } finally {
     if (browser) {
       await browser.close();
     }
   }
-};
+}
 
 async function launchBrowser() {
   const executablePath = await chromium.executablePath;

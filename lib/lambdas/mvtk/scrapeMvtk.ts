@@ -1,12 +1,12 @@
 import * as chromium from "chrome-aws-lambda";
 import { launch, Browser, ElementHandle } from "puppeteer-core";
 
+// prettier-ignore
 type ThenArg<T> = T extends Promise<infer U> ? U :
     T extends ((...args: any[]) => Promise<infer U>) ? U :
     T;
 
 export type Mvtk = ThenArg<ReturnType<typeof scrapeMvtk>>;
-
 
 const MVTK_USER = process.env.MVTK_USER || "";
 const MVTK_PASSWORD = process.env.MVTK_PASSWORD || "";
@@ -27,29 +27,29 @@ export async function scrapeMvtk() {
     await page.waitForSelector(".sortByDateRelease");
 
     const response = [];
-    const lookList = await page.$$('.sortByDateRelease .look a.active');
+    const lookList = await page.$$(".sortByDateRelease .look a.active");
     for (const look of lookList) {
-      const item = await page.evaluateHandle(el => el.parentNode.parentNode, look) as ElementHandle;
+      const item = (await page.evaluateHandle((el) => el.parentNode.parentNode, look)) as ElementHandle;
 
-      const dateElm = await item.$('.date');
+      const dateElm = await item.$(".date");
       if (!dateElm) continue;
-      const dateString = await (await dateElm.getProperty('textContent')).jsonValue();
+      const dateString = await (await dateElm.getProperty("textContent")).jsonValue();
 
-      const titleElm = await item.$('.ttl');
+      const titleElm = await item.$(".ttl");
       if (!titleElm) continue;
-      const title = await (await titleElm.getProperty('textContent')).jsonValue();
+      const title = await (await titleElm.getProperty("textContent")).jsonValue();
 
-      const linkElm = await item.$('.ttl a');
+      const linkElm = await item.$(".ttl a");
       if (!linkElm) continue;
-      const link = await (await linkElm.getProperty('href')).jsonValue();
+      const link = await (await linkElm.getProperty("href")).jsonValue();
 
-      const imgElm = await item.$('.image img');
+      const imgElm = await item.$(".image img");
       if (!imgElm) continue;
-      const img = await (await imgElm.getProperty('src')).jsonValue();
+      const img = await (await imgElm.getProperty("src")).jsonValue();
 
-      const descriptionElm = await item.$('.description');
+      const descriptionElm = await item.$(".description");
       if (!descriptionElm) continue;
-      const description = await (await descriptionElm.getProperty('textContent')).jsonValue();
+      const description = await (await descriptionElm.getProperty("textContent")).jsonValue();
 
       response.push({
         date: dateString as string,
