@@ -2,15 +2,18 @@ import * as childProcess from "child_process";
 import * as fs from "fs";
 import * as path from "path";
 import * as crypt from "crypto";
+import * as rimraf from "rimraf";
 
 export const LAMBDA_LAYER_DIR = `${process.cwd()}/layer`;
 const LAMBDA_LAYER_RUNTIME_DIR = "nodejs";
 const LAMBDA_DIR = path.join(__dirname, "lambdas");
 
+export const PARCEL_CACHE_BASE_DIR = ".parcel-cache";
+
 const PACKAGE_JSON = "package.json";
 const PACKAGE_LOCK_JSON = "package-lock.json";
 
-export function setUpLambdaLayer() {
+export function setUpLambdaLayer(): void {
   const targetDir = path.join(LAMBDA_LAYER_DIR, LAMBDA_LAYER_RUNTIME_DIR);
   fs.mkdirSync(targetDir, { recursive: true });
 
@@ -43,4 +46,16 @@ function md5hash(filePath: string) {
   const hash = crypt.createHash("md5");
   hash.update(buffer);
   return hash.digest("base64");
+}
+
+export function lambdaDependencies(): string[] {
+  const file = path.join(LAMBDA_DIR, PACKAGE_JSON);
+  const packageJsonString = fs.readFileSync(file, "utf-8");
+  const packageJson = JSON.parse(packageJsonString);
+  const dependencies = packageJson["dependencies"];
+  return Object.keys(dependencies);
+}
+
+export function cleanParcelCacheDir(): void {
+  rimraf.sync(PARCEL_CACHE_BASE_DIR);
 }

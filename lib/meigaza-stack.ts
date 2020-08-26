@@ -5,7 +5,7 @@ import { Rule, Schedule } from "@aws-cdk/aws-events";
 import { LambdaFunction } from "@aws-cdk/aws-events-targets";
 import { RetentionDays } from "@aws-cdk/aws-logs";
 import * as path from "path";
-import { LAMBDA_LAYER_DIR } from "./setup-lambda-layer";
+import { LAMBDA_LAYER_DIR, lambdaDependencies, PARCEL_CACHE_BASE_DIR } from "./setup-lambda-layer";
 
 export class MeigazaStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -16,12 +16,15 @@ export class MeigazaStack extends Stack {
       compatibleRuntimes: [Runtime.NODEJS_12_X],
     });
 
+    const npms = lambdaDependencies();
     const lambdaOptions = {
       runtime: Runtime.NODEJS_12_X,
       memorySize: 1600,
       logRetention: RetentionDays.SIX_MONTHS,
       layers: [layer],
       timeout: Duration.minutes(3),
+      sourceMaps: true,
+      externalModules: ["aws-sdk", ...npms],
     };
 
     const meigazaFunction = new NodejsFunction(this, "meigaza", {
@@ -30,6 +33,7 @@ export class MeigazaStack extends Stack {
       environment: {
         SLACK_INCOMING_WEBHOOK_URL: process.env.SLACK_INCOMING_WEBHOOK_URL || "",
       },
+      cacheDir: `./${PARCEL_CACHE_BASE_DIR}/meigaza`,
       ...lambdaOptions,
     });
 
@@ -50,6 +54,7 @@ export class MeigazaStack extends Stack {
         IFTTT_WEBHOOK_URL: process.env.IFTTT_WEBHOOK_URL || "",
         SLACK_INCOMING_WEBHOOK_URL: process.env.SLACK_INCOMING_WEBHOOK_URL || "",
       },
+      cacheDir: `./${PARCEL_CACHE_BASE_DIR}/mvtk`,
       ...lambdaOptions,
     });
 
