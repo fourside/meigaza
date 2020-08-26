@@ -5,7 +5,7 @@ import { Rule, Schedule } from "@aws-cdk/aws-events";
 import { LambdaFunction } from "@aws-cdk/aws-events-targets";
 import { RetentionDays } from "@aws-cdk/aws-logs";
 import * as path from "path";
-import { LAMBDA_LAYER_DIR } from "./setup-lambda-layer";
+import { LAMBDA_LAYER_DIR, lambdaDependencies } from "./setup-lambda-layer";
 
 export class MeigazaStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -16,12 +16,15 @@ export class MeigazaStack extends Stack {
       compatibleRuntimes: [Runtime.NODEJS_12_X],
     });
 
+    const npms = lambdaDependencies();
     const lambdaOptions = {
       runtime: Runtime.NODEJS_12_X,
       memorySize: 1600,
       logRetention: RetentionDays.SIX_MONTHS,
       layers: [layer],
       timeout: Duration.minutes(3),
+      sourceMaps: true,
+      externalModules: ["aws-sdk", ...npms],
     };
 
     const meigazaFunction = new NodejsFunction(this, "meigaza", {
