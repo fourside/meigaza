@@ -29,6 +29,10 @@ export async function scraper(theaters: string[]) {
       };
 
       const dateList = await page.$$(".tb_tc li");
+      if (dateList.length === 0) {
+        console.log(`cannot scrape ${theater}`);
+        continue;
+      }
       for (const dateElm of dateList) {
         const dateText = await (await dateElm.getProperty("textContent")).jsonValue();
         await dateElm.click();

@@ -29,7 +29,13 @@ export function mapTheatersToSlackMessage(theater: Theater) {
       return schedule.date === "今日" || schedule.date === "明日";
     });
     if (!today) {
-      throw new Error("today's schedule is nothing");
+      return [
+        {
+          title: "today's schedule nothing",
+          value: "",
+          short: false,
+        },
+      ];
     }
     message.fields = today.movies.map((movie) => {
       return {
