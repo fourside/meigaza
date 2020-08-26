@@ -25,6 +25,7 @@ export class MeigazaStack extends Stack {
       timeout: Duration.minutes(3),
       sourceMaps: true,
       externalModules: ["aws-sdk", ...npms],
+      cacheDir: ".cache",
     };
 
     const meigazaFunction = new NodejsFunction(this, "meigaza", {
