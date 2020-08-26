@@ -2,10 +2,13 @@ import * as childProcess from "child_process";
 import * as fs from "fs";
 import * as path from "path";
 import * as crypt from "crypto";
+import * as rimraf from "rimraf";
 
 export const LAMBDA_LAYER_DIR = `${process.cwd()}/layer`;
 const LAMBDA_LAYER_RUNTIME_DIR = "nodejs";
 const LAMBDA_DIR = path.join(__dirname, "lambdas");
+
+export const PARCEL_CACHE_BASE_DIR = ".parcel-cache";
 
 const PACKAGE_JSON = "package.json";
 const PACKAGE_LOCK_JSON = "package-lock.json";
@@ -51,4 +54,8 @@ export function lambdaDependencies(): string[] {
   const packageJson = JSON.parse(packageJsonString);
   const dependencies = packageJson["dependencies"];
   return Object.keys(dependencies);
+}
+
+export function cleanParcelCacheDir(): void {
+  rimraf.sync(PARCEL_CACHE_BASE_DIR);
 }
