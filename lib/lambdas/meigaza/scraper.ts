@@ -1,5 +1,5 @@
-import * as chromium from "chrome-aws-lambda";
-import { launch, Browser } from "puppeteer-core";
+import { Browser } from "puppeteer-core";
+import { browserLauncher } from "../shared/BrowserLauncher";
 
 type Movie = {
   title: string;
@@ -14,7 +14,7 @@ type Schedule = {
 export async function scraper(theaters: string[]) {
   let browser: Browser | undefined;
   try {
-    browser = await launchBrowser();
+    browser = await browserLauncher();
     const responses = [];
 
     for (const theater of theaters) {
@@ -71,19 +71,4 @@ export async function scraper(theaters: string[]) {
       await browser.close();
     }
   }
-}
-
-async function launchBrowser() {
-  const executablePath = await chromium.executablePath;
-  if (executablePath) {
-    return await launch({
-      args: chromium.args,
-      product: "chrome",
-      defaultViewport: chromium.defaultViewport,
-      executablePath: executablePath,
-      headless: chromium.headless,
-    });
-  }
-  const puppeteer = await import("puppeteer");
-  return await puppeteer.launch();
 }
