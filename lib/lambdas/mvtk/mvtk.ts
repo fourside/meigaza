@@ -1,10 +1,10 @@
 import { scrapeMvtk } from "./scrapeMvtk";
 import { mapToIftttMessage } from "./mapToIftttMessage";
 import { mapToSlackMessage } from "./mapToSlackMessage";
-import { sendToIfttt } from "./sendToIfttt";
-import { sendToSlack } from "./sendToSlack";
+import { sendMessageToIfttt } from "../shared/sendMessageToIfttt";
+import { sendMessageToSlack } from "../shared/sendMessageToSlack";
 
-export async function handler(event: any) {
+export async function handler(event: any): Promise<void> {
   try {
     const mvtks = await scrapeMvtk();
     const iftttMessage = mapToIftttMessage(mvtks);
@@ -12,8 +12,8 @@ export async function handler(event: any) {
 
     const results = await Promise.all([
       // prettier-ignore
-      sendToIfttt(iftttMessage),
-      sendToSlack(slackMessage),
+      sendMessageToIfttt(iftttMessage),
+      sendMessageToSlack(slackMessage),
     ]);
     console.log(results);
   } catch (e) {

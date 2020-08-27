@@ -1,9 +1,9 @@
 import { theaters } from "./theaters";
 import { scraper } from "./scraper";
 import { mapTheatersToSlackMessage } from "./mapTheaterToSlackMessage";
-import { sendMessageToSlack } from "./sendMessageToSlack";
+import { sendMessageToSlack } from "../shared/sendMessageToSlack";
 
-export async function handler(event: any) {
+export async function handler(event: any): Promise<void> {
   console.log(JSON.stringify(event));
   try {
     const theater = await scraper(theaters);

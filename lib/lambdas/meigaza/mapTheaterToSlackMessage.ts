@@ -1,4 +1,5 @@
 import { scraper } from "./scraper";
+import { SlackMessage, Field } from "../shared/sendMessageToSlack";
 
 // prettier-ignore
 type ThenArg<T> = T extends Promise<infer U> ? U :
@@ -7,13 +8,7 @@ type ThenArg<T> = T extends Promise<infer U> ? U :
 
 type Theater = ThenArg<ReturnType<typeof scraper>>;
 
-type SlackMessageFields = {
-  title: string;
-  value: string;
-  short: boolean;
-};
-
-export function mapTheatersToSlackMessage(theater: Theater) {
+export function mapTheatersToSlackMessage(theater: Theater): SlackMessage {
   const attachment = theater.theater.map((theater) => {
     const message = {
       fallback: "films schedule (fallback message)",
@@ -21,7 +16,7 @@ export function mapTheatersToSlackMessage(theater: Theater) {
       pretext: "films schedule",
       title: theater.name,
       title_link: theater.url,
-      fields: [] as SlackMessageFields[],
+      fields: [] as Field[],
       ts: Math.floor(new Date().getTime() / 1000),
     };
 
@@ -29,13 +24,14 @@ export function mapTheatersToSlackMessage(theater: Theater) {
       return schedule.date === "今日" || schedule.date === "明日";
     });
     if (!today) {
-      return [
+      message.fields = [
         {
           title: "today's schedule nothing",
           value: "",
           short: false,
         },
       ];
+      return message;
     }
     message.fields = today.movies.map((movie) => {
       return {
