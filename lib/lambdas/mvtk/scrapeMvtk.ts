@@ -1,5 +1,5 @@
-import * as chromium from "chrome-aws-lambda";
-import { launch, Browser, ElementHandle } from "puppeteer-core";
+import { Browser, ElementHandle } from "puppeteer-core";
+import { browserLauncher } from "../shared/BrowserLauncher";
 
 // prettier-ignore
 type ThenArg<T> = T extends Promise<infer U> ? U :
@@ -16,7 +16,7 @@ const LOGIN_URL = "https://mvtk.jp/Account/Login";
 export async function scrapeMvtk() {
   let browser: Browser | undefined;
   try {
-    browser = await launchBrowser();
+    browser = await browserLauncher();
 
     const page = await browser.newPage();
     await page.goto(LOGIN_URL, { waitUntil: "domcontentloaded" });
@@ -66,19 +66,4 @@ export async function scrapeMvtk() {
       await browser.close();
     }
   }
-}
-
-async function launchBrowser() {
-  const executablePath = await chromium.executablePath;
-  if (executablePath) {
-    return await launch({
-      args: chromium.args,
-      product: "chrome",
-      defaultViewport: chromium.defaultViewport,
-      executablePath: executablePath,
-      headless: chromium.headless,
-    });
-  }
-  const puppeteer = await import("puppeteer");
-  return await puppeteer.launch();
 }

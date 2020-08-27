@@ -4,8 +4,7 @@ import { Browser } from "puppeteer-core";
 export async function browserLauncher(): Promise<Browser> {
   const executablePath = await chromium.executablePath;
   if (executablePath) {
-    const puppeteerCore = await import("puppeteer-core");
-    return await puppeteerCore.launch({
+    return await chromium.puppeteer.launch({
       args: chromium.args,
       product: "chrome",
       defaultViewport: chromium.defaultViewport,
