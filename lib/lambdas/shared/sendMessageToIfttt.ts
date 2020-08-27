@@ -1,11 +1,14 @@
 import axios from "axios";
-import { mapToIftttMessage } from "./mapToIftttMessage";
 
 const IFTTT_WEBHOOK_URL = process.env.IFTTT_WEBHOOK_URL;
 
-type Message = ReturnType<typeof mapToIftttMessage>;
+export type IftttMessage = {
+  value1: string;
+  value2: string;
+  value3: string;
+};
 
-export async function sendToIfttt(messages: Message) {
+export async function sendMessageToIfttt(messages: IftttMessage[]): Promise<void> {
   if (messages.length === 0) {
     console.log("message is zero");
     return;

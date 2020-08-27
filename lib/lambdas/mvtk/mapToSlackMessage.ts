@@ -1,7 +1,8 @@
 import { Mvtk } from "./scrapeMvtk";
 import { isWithinThisWeek } from "./util";
+import { SlackMessage } from "../shared/sendMessageToSlack";
 
-export function mapToSlackMessage(mvtks: Mvtk) {
+export function mapToSlackMessage(mvtks: Mvtk): SlackMessage {
   const today = new Date();
   const attachment = mvtks.mvtk
     .filter((mvtk) => {
