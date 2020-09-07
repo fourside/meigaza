@@ -53,7 +53,9 @@ export function lambdaDependencies(): string[] {
   const packageJsonString = fs.readFileSync(file, "utf-8");
   const packageJson = JSON.parse(packageJsonString);
   const dependencies = packageJson["dependencies"];
-  return Object.keys(dependencies);
+  const devDependencies = packageJson["devDependencies"];
+  const deps = Object.keys(dependencies).concat(Object.keys(devDependencies));
+  return deps;
 }
 
 export function cleanParcelCacheDir(): void {
