@@ -1,23 +1,25 @@
 import axios, { AxiosResponse } from "axios";
 
 export type SlackMessage = {
-  attachments: Attachment[];
+  blocks: Blocks;
 };
 
-type Attachment = {
-  fallback: string;
-  color: string;
-  pretext: string;
-  title: string;
-  title_link: string;
-  fields: Field[];
-  ts: number;
+export type Blocks = (Section | Divider)[];
+export type Section = {
+  type: "section";
+  text: {
+    type: "mrkdwn";
+    text: string;
+  };
+  accessory?: Accessory;
 };
-
-export type Field = {
-  title: string;
-  value: string;
-  short: boolean;
+type Accessory = {
+  type: "image";
+  image_url: string;
+  alt_text: string;
+};
+export type Divider = {
+  type: "divider";
 };
 
 const INCOMING_WEBHOOK_URL = process.env.SLACK_INCOMING_WEBHOOK_URL;
