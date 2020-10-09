@@ -1,5 +1,5 @@
 import { scraper } from "./scraper";
-import { SlackMessage, Field } from "../shared/sendMessageToSlack";
+import { SlackMessage, Blocks, Section, Divider } from "../shared/sendMessageToSlack";
 
 // prettier-ignore
 type ThenArg<T> = T extends Promise<infer U> ? U :
@@ -9,38 +9,61 @@ type ThenArg<T> = T extends Promise<infer U> ? U :
 type Theater = ThenArg<ReturnType<typeof scraper>>;
 
 export function mapTheatersToSlackMessage(theater: Theater): SlackMessage {
-  const attachment = theater.theater.map((theater) => {
-    const message = {
-      fallback: "films schedule (fallback message)",
-      color: "#36a64f",
-      pretext: "films schedule",
-      title: theater.name,
-      title_link: theater.url,
-      fields: [] as Field[],
-      ts: Math.floor(new Date().getTime() / 1000),
-    };
+  const blocks: Blocks = [];
+  theater.theater.forEach((theater) => {
+    const theaterNameSection = makeTheaterNameSection(theater.name, theater.url);
+    blocks.push(theaterNameSection);
 
     const today = theater.schedules.find((schedule) => {
       return schedule.date === "今日" || schedule.date === "明日";
     });
+
     if (!today) {
-      message.fields = [
-        {
-          title: "today's schedule nothing",
-          value: "",
-          short: false,
-        },
-      ];
-      return message;
+      blocks.push(makeNoScheduleSection());
+    } else {
+      const movieSections = today.movies.map((movie) => {
+        return makeMovieScheduleSection(movie.title, movie.startAt);
+      });
+      blocks.push(...movieSections);
     }
-    message.fields = today.movies.map((movie) => {
-      return {
-        title: movie.title,
-        value: movie.startAt.join(", "),
-        short: false,
-      };
-    });
-    return message;
+    blocks.push(makeDividerSection());
   });
-  return { attachments: attachment };
+  blocks.pop(); // remove last divider
+  return { blocks };
+}
+
+function makeTheaterNameSection(name: string, url: string): Section {
+  return {
+    type: "section",
+    text: {
+      type: "mrkdwn",
+      text: `*<${url}|${name}>*`,
+    },
+  };
+}
+
+function makeNoScheduleSection(): Section {
+  return {
+    type: "section",
+    text: {
+      type: "mrkdwn",
+      text: "today's schedule nothing",
+    },
+  };
+}
+
+function makeMovieScheduleSection(title: string, startAts: string[]): Section {
+  return {
+    type: "section",
+    text: {
+      type: "mrkdwn",
+      text: `*${title}*\n${startAts.join(",")}`,
+    },
+  };
+}
+
+function makeDividerSection(): Divider {
+  return {
+    type: "divider",
+  };
 }
