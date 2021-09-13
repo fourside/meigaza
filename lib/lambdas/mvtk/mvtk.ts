@@ -4,7 +4,7 @@ import { mapToSlackMessage } from "./mapToSlackMessage";
 import { sendMessageToIfttt } from "../shared/sendMessageToIfttt";
 import { sendMessageToSlack } from "../shared/sendMessageToSlack";
 
-export async function handler(event: any): Promise<void> {
+export async function handler(_event: unknown): Promise<void> {
   try {
     const mvtks = await scrapeMvtk();
     const iftttMessage = mapToIftttMessage(mvtks);

@@ -1,19 +1,24 @@
-import { Browser, ElementHandle } from "puppeteer-core";
-import { browserLauncher } from "../shared/BrowserLauncher";
-
-// prettier-ignore
-type ThenArg<T> = T extends Promise<infer U> ? U :
-    T extends ((...args: any[]) => Promise<infer U>) ? U :
-    T;
-
-export type Mvtk = ThenArg<ReturnType<typeof scrapeMvtk>>;
+import { ElementHandle } from "puppeteer-core";
+import { browserLauncher, Browser, getTextFromElement } from "../shared/BrowserLauncher";
 
 const MVTK_USER = process.env.MVTK_USER || "";
 const MVTK_PASSWORD = process.env.MVTK_PASSWORD || "";
 
 const LOGIN_URL = "https://mvtk.jp/Account/Login";
 
-export async function scrapeMvtk() {
+export type Mvtk = {
+  date: string;
+  title: string;
+  link: string;
+  img: string;
+  description: string;
+};
+
+export type MvtkResponse = {
+  mvtk: Mvtk[];
+};
+
+export async function scrapeMvtk(): Promise<MvtkResponse> {
   let browser: Browser | undefined;
   try {
     browser = await browserLauncher();
@@ -26,38 +31,42 @@ export async function scrapeMvtk() {
     await page.click("button[type=submit]");
     await page.waitForSelector(".sortByDateRelease");
 
-    const response = [];
+    const response: Mvtk[] = [];
     const lookList = await page.$$(".sortByDateRelease .look a.active");
     for (const look of lookList) {
       const item = (await page.evaluateHandle((el) => el.parentNode.parentNode, look)) as ElementHandle;
 
       const dateElm = await item.$(".date");
-      if (!dateElm) continue;
-      const dateString = await (await dateElm.getProperty("textContent")).jsonValue();
+      const date = await getTextFromElement(dateElm);
+      if (date === undefined) {
+        continue;
+      }
 
       const titleElm = await item.$(".ttl");
-      if (!titleElm) continue;
-      const title = await (await titleElm.getProperty("textContent")).jsonValue();
+      const title = await getTextFromElement(titleElm);
+      if (title === undefined) {
+        continue;
+      }
 
       const linkElm = await item.$(".ttl a");
-      if (!linkElm) continue;
-      const link = await (await linkElm.getProperty("href")).jsonValue();
+      const link = await getTextFromElement(linkElm);
+      if (link === undefined) {
+        continue;
+      }
 
       const imgElm = await item.$(".image img");
-      if (!imgElm) continue;
-      const img = await (await imgElm.getProperty("src")).jsonValue();
+      const img = await getTextFromElement(imgElm);
+      if (img === undefined) {
+        continue;
+      }
 
       const descriptionElm = await item.$(".description");
-      if (!descriptionElm) continue;
-      const description = await (await descriptionElm.getProperty("textContent")).jsonValue();
+      const description = await getTextFromElement(descriptionElm);
+      if (description === undefined) {
+        continue;
+      }
 
-      response.push({
-        date: dateString as string,
-        title: title as string,
-        link: link as string,
-        img: img as string,
-        description: description as string,
-      });
+      response.push({ date, title, link, img, description });
     }
 
     return { mvtk: response };

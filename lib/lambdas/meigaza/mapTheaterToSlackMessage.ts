@@ -1,16 +1,9 @@
-import { scraper } from "./scraper";
+import { Theater } from "./scraper";
 import { SlackMessage, Blocks, Section, Divider } from "../shared/sendMessageToSlack";
 
-// prettier-ignore
-type ThenArg<T> = T extends Promise<infer U> ? U :
-    T extends ((...args: any[]) => Promise<infer U>) ? U :
-    T;
-
-type Theater = ThenArg<ReturnType<typeof scraper>>;
-
-export function mapTheatersToSlackMessage(theater: Theater): SlackMessage {
+export function mapTheatersToSlackMessage(theaters: Theater[]): SlackMessage {
   const blocks: Blocks = [];
-  theater.theater.forEach((theater) => {
+  theaters.forEach((theater) => {
     const theaterNameSection = makeTheaterNameSection(theater.name, theater.url);
     blocks.push(theaterNameSection);
 

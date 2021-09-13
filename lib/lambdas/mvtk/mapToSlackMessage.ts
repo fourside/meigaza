@@ -1,12 +1,10 @@
-import { Mvtk } from "./scrapeMvtk";
+import { MvtkResponse, Mvtk } from "./scrapeMvtk";
 import { isWithinThisWeek } from "./util";
 import { SlackMessage, Section } from "../shared/sendMessageToSlack";
 
-type mvtk = Mvtk["mvtk"] extends Array<infer T> ? T : never;
-
-export function mapToSlackMessage(mvtks: Mvtk): SlackMessage {
+export function mapToSlackMessage(mvtkResponse: MvtkResponse): SlackMessage {
   const today = new Date();
-  const blocks = mvtks.mvtk
+  const blocks = mvtkResponse.mvtk
     .filter((mvtk) => {
       return isWithinThisWeek(mvtk.date, today);
     })
@@ -18,7 +16,7 @@ export function mapToSlackMessage(mvtks: Mvtk): SlackMessage {
   return { blocks };
 }
 
-function makeMovieSection(mvtk: mvtk): Section {
+function makeMovieSection(mvtk: Mvtk): Section {
   return {
     type: "section",
     text: {

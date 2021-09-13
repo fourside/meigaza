@@ -1,17 +1,25 @@
-import { executablePath, puppeteer, args, defaultViewport, headless } from "chrome-aws-lambda";
-import { Browser } from "puppeteer-core";
+import chromium from "chrome-aws-lambda";
+import { Browser as PuppeteerCoreBrowser, ElementHandle } from "puppeteer-core";
+export type Browser = PuppeteerCoreBrowser;
 
 export async function browserLauncher(): Promise<Browser> {
-  const path = await executablePath;
-  if (path) {
-    return await puppeteer.launch({
-      args: args,
-      product: "chrome",
-      defaultViewport: defaultViewport,
-      executablePath: path,
-      headless: headless,
-    });
+  const path = await chromium.executablePath;
+  return await chromium.puppeteer.launch({
+    args: chromium.args,
+    product: "chrome",
+    defaultViewport: chromium.defaultViewport,
+    executablePath: path,
+    headless: chromium.headless,
+  });
+}
+
+export async function getTextFromElement(element: ElementHandle<Element> | null): Promise<string | undefined> {
+  if (element === null) {
+    return undefined;
   }
-  const p = await import("puppeteer");
-  return await p.launch();
+  const textContent = await element.getProperty("textContent");
+  if (textContent === undefined) {
+    return undefined;
+  }
+  return await textContent.jsonValue<string>();
 }

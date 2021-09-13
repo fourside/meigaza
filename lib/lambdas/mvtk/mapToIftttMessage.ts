@@ -1,10 +1,10 @@
-import { Mvtk } from "./scrapeMvtk";
+import { MvtkResponse } from "./scrapeMvtk";
 import { isWithinThisWeek } from "./util";
 import { IftttMessage } from "../shared/sendMessageToIfttt";
 
-export function mapToIftttMessage(mvtks: Mvtk): IftttMessage[] {
+export function mapToIftttMessage(mvtkResponse: MvtkResponse): IftttMessage[] {
   const today = new Date();
-  return mvtks.mvtk
+  return mvtkResponse.mvtk
     .filter((mvtk) => {
       return isWithinThisWeek(mvtk.date, today);
     })

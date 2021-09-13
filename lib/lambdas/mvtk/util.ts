@@ -1,6 +1,6 @@
 import { endOfISOWeek, parse } from "date-fns";
 
-export function isWithinThisWeek(dateString: string, today: Date) {
+export function isWithinThisWeek(dateString: string, today: Date): boolean {
   const yyyymmdd = dateString.match(/^\d{4}\/\d{1,2}\/\d{1,2}/);
   if (!yyyymmdd) {
     return false;

@@ -1,4 +1,4 @@
-import { Browser } from "puppeteer-core";
+import { Browser, getTextFromElement } from "../shared/BrowserLauncher";
 import { browserLauncher } from "../shared/BrowserLauncher";
 
 type Movie = {
@@ -11,7 +11,17 @@ type Schedule = {
   movies: Movie[];
 };
 
-export async function scraper(theaters: string[]) {
+export type Theater = {
+  name: string;
+  url: string;
+  schedules: Schedule[];
+};
+
+type ScraperResponse = {
+  theater: Theater[];
+};
+
+export async function scraper(theaters: string[]): Promise<ScraperResponse> {
   let browser: Browser | undefined;
   try {
     browser = await browserLauncher();
@@ -22,10 +32,10 @@ export async function scraper(theaters: string[]) {
       const url = `https://www.google.com/search?q=${encodeURIComponent(theater)}`;
       await page.goto(url, { waitUntil: "domcontentloaded" });
 
-      const response = {
+      const response: Theater = {
         name: theater,
         url: url,
-        schedules: [] as Schedule[],
+        schedules: [],
       };
 
       const dateList = await page.$$(".tb_tc li");
@@ -34,32 +44,40 @@ export async function scraper(theaters: string[]) {
         continue;
       }
       for (const dateElm of dateList) {
-        const dateText = await (await dateElm.getProperty("textContent")).jsonValue();
+        const dateText = await dateElm.getProperty("textContent");
+        if (dateText === undefined) {
+          continue;
+        }
+        const dateTextValue = await dateText.jsonValue<string>();
         await dateElm.click();
 
-        const schedules = await page.$$(`[data-date="${dateText}"] .lr_c_fcb.lr-s-stor`);
+        const schedules = await page.$$(`[data-date="${dateTextValue}"] .lr_c_fcb.lr-s-stor`);
         const movies: Movie[] = [];
         for (const schedule of schedules) {
           const titleElement = await schedule.$(".lr_c_tmt");
-          if (!titleElement) {
+          const title = await getTextFromElement(titleElement);
+          if (title === undefined) {
             continue;
           }
-          const title = await (await titleElement.getProperty("textContent")).jsonValue();
           const startElementList = await schedule.$$(".lr_c_s .lr_c_stnl");
-          const startList = [];
+          const startList: string[] = [];
           for (const startElm of startElementList) {
-            const startText = await (await startElm.getProperty("textContent")).jsonValue();
-            startList.push(startText);
+            const startText = await startElm.getProperty("textContent");
+            if (startText === undefined) {
+              continue;
+            }
+            const startTextValue = await startText.jsonValue<string>();
+            startList.push(startTextValue);
           }
 
           movies.push({
-            title: title as string,
-            startAt: startList as string[],
+            title,
+            startAt: startList,
           });
         }
 
         response.schedules.push({
-          date: dateText as string,
+          date: dateTextValue,
           movies: movies,
         });
       }
