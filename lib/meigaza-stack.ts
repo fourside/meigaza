@@ -5,7 +5,7 @@ import { Rule, Schedule } from "@aws-cdk/aws-events";
 import { LambdaFunction } from "@aws-cdk/aws-events-targets";
 import { RetentionDays } from "@aws-cdk/aws-logs";
 import * as path from "path";
-import { LAMBDA_LAYER_DIR, lambdaDependencies, PARCEL_CACHE_BASE_DIR } from "./setup-lambda-layer";
+import { LAMBDA_LAYER_DIR, lambdaDependencies } from "./setup-lambda-layer";
 
 export class MeigazaStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -33,7 +33,6 @@ export class MeigazaStack extends Stack {
       environment: {
         SLACK_INCOMING_WEBHOOK_URL: process.env.SLACK_INCOMING_WEBHOOK_URL || "",
       },
-      cacheDir: `./${PARCEL_CACHE_BASE_DIR}/meigaza`,
       ...lambdaOptions,
     });
 
@@ -54,7 +53,6 @@ export class MeigazaStack extends Stack {
         IFTTT_WEBHOOK_URL: process.env.IFTTT_WEBHOOK_URL || "",
         SLACK_INCOMING_WEBHOOK_URL: process.env.SLACK_INCOMING_WEBHOOK_URL || "",
       },
-      cacheDir: `./${PARCEL_CACHE_BASE_DIR}/mvtk`,
       ...lambdaOptions,
     });
 
