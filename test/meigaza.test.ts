@@ -1,9 +1,9 @@
 import { expect as expectCDK, matchTemplate, MatchStyle } from "@aws-cdk/assert";
-import * as cdk from "@aws-cdk/core";
+import { App } from "aws-cdk-lib";
 import * as Meigaza from "../lib/meigaza-stack";
 
 test("Empty Stack", () => {
-  const app = new cdk.App();
+  const app = new App();
   // WHEN
   const stack = new Meigaza.MeigazaStack(app, "MyTestStack");
   // THEN

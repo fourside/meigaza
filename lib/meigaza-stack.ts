@@ -1,15 +1,26 @@
-import { Stack, StackProps, Construct, Duration } from "@aws-cdk/core";
-import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
-import { LayerVersion, AssetCode, Runtime } from "@aws-cdk/aws-lambda";
-import { Rule, Schedule } from "@aws-cdk/aws-events";
-import { LambdaFunction } from "@aws-cdk/aws-events-targets";
-import { RetentionDays } from "@aws-cdk/aws-logs";
+import { Construct } from "constructs";
+import {
+  Stack,
+  StackProps,
+  Duration,
+  aws_lambda,
+  aws_lambda_nodejs,
+  aws_events,
+  aws_events_targets,
+  aws_logs,
+} from "aws-cdk-lib";
 import * as path from "path";
 import { LAMBDA_LAYER_DIR, lambdaDependencies } from "./setup-lambda-layer";
 
 export class MeigazaStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
+
+    const { LayerVersion, AssetCode, Runtime } = aws_lambda;
+    const { Rule, Schedule } = aws_events;
+    const { LambdaFunction } = aws_events_targets;
+    const { RetentionDays } = aws_logs;
+    const { NodejsFunction } = aws_lambda_nodejs;
 
     const layer = new LayerVersion(this, "chromeLayer", {
       code: AssetCode.fromAsset(LAMBDA_LAYER_DIR),
