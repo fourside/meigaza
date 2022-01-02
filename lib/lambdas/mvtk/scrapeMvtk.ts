@@ -1,5 +1,6 @@
 import { ElementHandle } from "puppeteer-core";
 import { browserLauncher, Browser, getTextFromElement } from "../shared/BrowserLauncher";
+import { ScrapeError } from "../shared/scrapeError";
 
 const MVTK_USER = process.env.MVTK_USER || "";
 const MVTK_PASSWORD = process.env.MVTK_PASSWORD || "";
@@ -39,31 +40,31 @@ export async function scrapeMvtk(): Promise<MvtkResponse> {
       const dateElm = await item.$(".date");
       const date = await getTextFromElement(dateElm);
       if (date === undefined) {
-        continue;
+        throw new ScrapeError("mvtk", ".date");
       }
 
       const titleElm = await item.$(".ttl");
       const title = await getTextFromElement(titleElm);
       if (title === undefined) {
-        continue;
+        throw new ScrapeError("mvtk", ".ttl");
       }
 
       const linkElm = await item.$(".ttl a");
       const link = await getTextFromElement(linkElm);
       if (link === undefined) {
-        continue;
+        throw new ScrapeError("mvtk", ".ttl a");
       }
 
       const imgElm = await item.$(".image img");
       const img = await getTextFromElement(imgElm);
       if (img === undefined) {
-        continue;
+        throw new ScrapeError("mvtk", ".image img");
       }
 
       const descriptionElm = await item.$(".description");
       const description = await getTextFromElement(descriptionElm);
       if (description === undefined) {
-        continue;
+        throw new ScrapeError("mvtk", ".description");
       }
 
       response.push({ date, title, link, img, description });

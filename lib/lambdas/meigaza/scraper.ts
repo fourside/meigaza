@@ -1,5 +1,6 @@
 import { Browser, getTextFromElement } from "../shared/BrowserLauncher";
 import { browserLauncher } from "../shared/BrowserLauncher";
+import { ScrapeError } from "../shared/scrapeError";
 
 type Movie = {
   title: string;
@@ -40,13 +41,12 @@ export async function scraper(theaters: string[]): Promise<ScraperResponse> {
 
       const dateList = await page.$$(".tb_tc li");
       if (dateList.length === 0) {
-        console.log(`cannot scrape ${theater}`);
-        continue;
+        throw new ScrapeError(theater, ".tb_tc li");
       }
       for (const dateElm of dateList) {
         const dateText = await dateElm.getProperty("textContent");
         if (dateText === undefined) {
-          continue;
+          throw new ScrapeError(theater);
         }
         const dateTextValue = await dateText.jsonValue<string>();
         await dateElm.click();
@@ -57,14 +57,14 @@ export async function scraper(theaters: string[]): Promise<ScraperResponse> {
           const titleElement = await schedule.$(".lr_c_tmt");
           const title = await getTextFromElement(titleElement);
           if (title === undefined) {
-            continue;
+            throw new ScrapeError(theater, ".lr_c_tmt");
           }
           const startElementList = await schedule.$$(".lr_c_s .lr_c_stnl");
           const startList: string[] = [];
           for (const startElm of startElementList) {
             const startText = await startElm.getProperty("textContent");
             if (startText === undefined) {
-              continue;
+              throw new ScrapeError(theater, ".lr_c_s .lr_c_stnl");
             }
             const startTextValue = await startText.jsonValue<string>();
             startList.push(startTextValue);
