@@ -24,12 +24,12 @@ export class MeigazaStack extends Stack {
 
     const layer = new LayerVersion(this, "chromeLayer", {
       code: AssetCode.fromAsset(LAMBDA_LAYER_DIR),
-      compatibleRuntimes: [Runtime.NODEJS_12_X],
+      compatibleRuntimes: [Runtime.NODEJS_14_X],
     });
 
     const npms = lambdaDependencies();
     const lambdaOptions = {
-      runtime: Runtime.NODEJS_12_X,
+      runtime: Runtime.NODEJS_14_X,
       memorySize: 1600,
       logRetention: RetentionDays.SIX_MONTHS,
       layers: [layer],
