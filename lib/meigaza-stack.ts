@@ -28,14 +28,16 @@ export class MeigazaStack extends Stack {
     });
 
     const npms = lambdaDependencies();
-    const lambdaOptions = {
+    const lambdaOptions: aws_lambda_nodejs.NodejsFunctionProps = {
       runtime: Runtime.NODEJS_14_X,
       memorySize: 1600,
       logRetention: RetentionDays.SIX_MONTHS,
       layers: [layer],
       timeout: Duration.minutes(3),
-      sourceMaps: true,
-      externalModules: ["aws-sdk", ...npms],
+      bundling: {
+        sourceMap: true,
+        externalModules: ["aws-sdk", ...npms],
+      },
     };
 
     const meigazaFunction = new NodejsFunction(this, "meigaza", {
