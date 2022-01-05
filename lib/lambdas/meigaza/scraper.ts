@@ -91,6 +91,10 @@ async function scrapeTheater(browser: Browser, theaterName: string): Promise<The
         startAt: startList,
       });
     }
+    theater.schedules.push({
+      date: dateTextValue,
+      movies: movies,
+    });
   }
   return theater;
 }
