@@ -8,7 +8,12 @@ export function mapTheatersToSlackMessage(theaters: Theater[]): SlackMessage {
     blocks.push(theaterNameSection);
 
     const today = theater.schedules.find((schedule) => {
-      return schedule.date === "今日" || schedule.date === "明日";
+      return (
+        schedule.date === "今日" ||
+        schedule.date === "明日" ||
+        schedule.date === "Today" ||
+        schedule.date === "Tomorrow"
+      );
     });
 
     if (!today) {

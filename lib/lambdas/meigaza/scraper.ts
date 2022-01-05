@@ -18,11 +18,11 @@ export type Theater = {
   schedules: Schedule[];
 };
 
-type ScraperResponse = {
+type ScraperResult = {
   theater: Theater[];
 };
 
-export async function scraper(theaterNames: string[]): Promise<ScraperResponse> {
+export async function scraper(theaterNames: string[]): Promise<ScraperResult> {
   let browser: Browser | undefined;
   try {
     browser = await browserLauncher();

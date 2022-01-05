@@ -7,8 +7,9 @@ import { ScrapeError } from "../shared/scrapeError";
 export async function handler(_event: unknown): Promise<void> {
   console.log(JSON.stringify(_event));
   try {
-    const response = await scraper(theaters);
-    const slackMessage = mapTheatersToSlackMessage(response.theater);
+    const scrapeResult = await scraper(theaters);
+    console.log("scraped:", scrapeResult);
+    const slackMessage = mapTheatersToSlackMessage(scrapeResult.theater);
     const result = await sendMessageToSlack(slackMessage);
     console.log(result);
   } catch (e) {
